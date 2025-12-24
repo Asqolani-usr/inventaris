@@ -73,15 +73,6 @@
                                         <label for="tanggal_masuk" class="form-label">{{__('date of entry')}} <span class="text-danger">*</span></label>
                                         <input type="date" name="tanggal_masuk" class="form-control">
                                     </div>
-                                    <div class="form-group">
-                                        <label for="supplier" class="form-label">{{__('choose a supplier')}}<span class="text-danger">*</span></label>
-                                        <select name="supplier" class="form-control">
-                                            <option selected value="-- Pilih Supplier --">-- {{__('choose a supplier')}} --</option>
-                                            @foreach( $suppliers as $supplier)
-                                            <option value="{{$supplier->id}}">{{$supplier->name}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
                                 </div>
                                 <div class="col-md-5">
                                     <label for="kode_barang" class="form-label">{{__('item code')}} <span class="text-danger">*</span></label>
@@ -134,7 +125,6 @@
                                     <th class="border-bottom-0">{{__("date of entry")}}</th>
                                     <th class="border-bottom-0">{{__("incoming item code")}}</th>
                                     <th class="border-bottom-0">{{__("item code")}}</th>
-                                    <th class="border-bottom-0">{{__("supplier")}}</th>
                                     <th class="border-bottom-0">{{__("item")}}</th>
                                     <th class="border-bottom-0">{{__("incoming amount")}}</th>
                                     <th class="border-bottom-0" width="1%">{{__("action")}}</th>
@@ -269,7 +259,6 @@
         const item_id =  $("input[name='id_barang']").val();
         const user_id = `{{Auth::user()->id}}`;
         const date_received = $("input[name='tanggal_masuk'").val();
-        const supplier_id = $("select[name='supplier'").val();
         const invoice_number = $("input[name='kode'").val();
         const quantity = $("input[name='jumlah'").val();
 
@@ -278,7 +267,6 @@
         Form.append('item_id',item_id);
         Form.append('date_received', date_received );
         Form.append('quantity', quantity );
-        Form.append('supplier_id', supplier_id );
         Form.append('invoice_number', invoice_number );
         $.ajax({
             url:`{{route('transaksi.masuk.save')}}`,
@@ -297,7 +285,6 @@
                     });
                     $('#kembali').click();
                     $("input[name='id_barang']").val(null);
-                    $("select[name='supplier'").val(null);
                     $("input[name='nama_barang']").val(null);
                     $("input[name='kode_barang']").val(null);
                     $("select[name='jenis_barang']").val(null);
@@ -317,13 +304,12 @@
         const item_id =  $("input[name='id_barang']").val();
         const user_id = `{{Auth::user()->id}}`;
         const date_received = $("input[name='tanggal_masuk'").val();
-        const supplier_id = $("select[name='supplier'").val();
         const invoice_number = $("input[name='kode'").val();
         const quantity = $("input[name='jumlah'").val();
         $.ajax({
             url:`{{route('transaksi.masuk.update')}}`,
             type:"put",
-            data:{id,item_id,user_id,date_received,supplier_id,invoice_number,quantity},
+            data:{id,item_id,user_id,date_received,invoice_number,quantity},
             success:function(res){
                     Swal.fire({
                         position: "center",
@@ -335,7 +321,6 @@
                     $('#kembali').click();
                     $("input[name='id']").val(null);
                     $("input[name='id_barang']").val(null);
-                    $("select[name='supplier'").val("-- {{__('choose a supplier')}} --");
                     $("input[name='nama_barang']").val(null);
                     $("input[name='kode_barang']").val(null);
                     $("select[name='jenis_barang']").val(null);
@@ -372,10 +357,6 @@
                },{
                 data:"kode_barang",
                 name:"kode_barang"
-               },
-               {
-                data:"supplier_name",
-                name:"supplier_name"
                },{
                 data:"item_name",
                 name:"item_name"
@@ -413,7 +394,6 @@
             $("input[name='kode']").val("BRGMSK-"+id);
             $("input[name='id']").val(null);
             $("input[name='id_barang']").val(null);
-            $("select[name='supplier'").val("-- {{__('choose a supplier')}} --");
             $("input[name='nama_barang']").val(null);
             $("input[name='tanggal_masuk']").val(null);
             $("input[name='kode_barang']").val(null);
@@ -442,7 +422,6 @@
                 $("input[name='id']").val(data.id);
                 $("input[name='kode']").val(data.invoice_number);
                 $("input[name='id_barang']").val(data.id_barang);
-                $("select[name='supplier'").val(data.supplier_id);
                 $("input[name='nama_barang']").val(data.nama_barang);
                 $("input[name='tanggal_masuk']").val(data.date_received);
                 $("input[name='kode_barang']").val(data.kode_barang);

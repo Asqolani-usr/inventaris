@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use App\Models\GoodsIn;
-use App\Models\Supplier;
 use App\Models\Item;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
@@ -15,13 +14,12 @@ class TransactionInController extends Controller
 {
     public function index():View
     {
-        $suppliers = Supplier::all();
-        return view('admin.master.transaksi.masuk',compact('suppliers'));
+        return view('admin.master.transaksi.masuk');
     }
 
     public function list(Request $request):JsonResponse
     {
-        $goodsins = GoodsIn::with('item','user','supplier')->latest()->get();
+        $goodsins = GoodsIn::with('item','user')->latest()->get();
         if($request->ajax()){
             return DataTables::of($goodsins)
             ->addColumn('quantity',function($data){
@@ -33,9 +31,6 @@ class TransactionInController extends Controller
             })
             ->addColumn("kode_barang",function($data){
                 return $data -> item -> code;
-            })
-            ->addColumn("supplier_name",function($data){
-                return $data -> supplier -> name;
             })
             ->addColumn("item_name",function($data){
                 return $data -> item -> name;
@@ -54,7 +49,6 @@ class TransactionInController extends Controller
     {
         $data = [
             'user_id'=>$request->user_id,
-            'supplier_id'=>$request->supplier_id,
             'date_received'=>$request->date_received,
             'quantity'=>$request->quantity,
             'invoice_number'=>$request->invoice_number,
@@ -72,13 +66,12 @@ class TransactionInController extends Controller
     public function detail(Request $request):JsonResponse
     {
         $id = $request -> id;
-        $data = GoodsIn::with('supplier')->where('id',$id)->first();
+        $data = GoodsIn::where('id',$id)->first();
         $barang = Item::with('category','unit')->find($data -> item_id);
         $data['kode_barang'] = $barang -> code;
         $data['satuan_barang'] = $barang -> unit -> name;
         $data['jenis_barang'] = $barang -> category -> name;
         $data['nama_barang'] = $barang  -> name;
-        $data['supplier_id'] = $data -> supplier_id;
         $data['id_barang'] = $barang -> id;
         return response()->json(
             ["data"=>$data]
@@ -90,7 +83,6 @@ class TransactionInController extends Controller
         $id = $request -> id;
         $data = GoodsIn::find($id);
         $data -> user_id = $request->user_id;
-        $data -> supplier_id = $request->supplier_id;
         $data -> date_received = $request->date_received;
         $data -> quantity = $request->quantity;
         $data -> item_id = $request->item_id;

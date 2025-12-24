@@ -7,7 +7,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use App\Models\GoodsOut;
 use App\Models\GoodsIn;
-use App\Models\Customer;
 use App\Models\Item;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
@@ -17,13 +16,12 @@ class TransactionOutController extends Controller
     public function index():View
     {
         $in_status = Item::where('active','true')->count();
-        $customers = Customer::all();
-        return view('admin.master.transaksi.keluar',compact('customers','in_status'));
+        return view('admin.master.transaksi.keluar',compact('in_status'));
     }
 
     public function list(Request $request):JsonResponse
     {
-        $goodsouts = GoodsOut::with('item','user','customer')->latest()->get();
+        $goodsouts = GoodsOut::with('item','user')->latest()->get();
         if($request->ajax()){
             return DataTables::of($goodsouts)
             ->addColumn('quantity',function($data){
@@ -35,9 +33,6 @@ class TransactionOutController extends Controller
             })
             ->addColumn("kode_barang",function($data){
                 return $data -> item -> code;
-            })
-            ->addColumn("customer_name",function($data){
-                return $data -> customer -> name;
             })
             ->addColumn("item_name",function($data){
                 return $data -> item -> name;
@@ -73,7 +68,6 @@ class TransactionOutController extends Controller
             'quantity'=>$request->quantity,
             'invoice_number'=>$request->invoice_number,
             'date_out'=>$request->date_out,
-            'customer_id'=>$request->customer_id
         ];
         GoodsOut::create($data);
         return response() -> json([
@@ -84,13 +78,12 @@ class TransactionOutController extends Controller
     public function detail(Request $request):JsonResponse
     {
         $id = $request -> id;
-        $data = GoodsOut::with('Customer')->where('id',$id)->first();
+        $data = GoodsOut::where('id',$id)->first();
         $barang = Item::with('category','unit')->find($data -> item_id);
         $data['kode_barang'] = $barang -> code;
         $data['satuan_barang'] = $barang -> unit -> name;
         $data['jenis_barang'] = $barang -> category -> name;
         $data['nama_barang'] = $barang  -> name;
-        $data['customer_id'] = $data -> customer_id;
         $data['id_barang'] = $barang -> id;
         return response()->json(
             ["data"=>$data]
@@ -102,7 +95,6 @@ class TransactionOutController extends Controller
         $id = $request -> id;
         $data = GoodsOut::find($id);
         $data -> user_id = $request->user_id;
-        $data -> customer_id = $request->customer_id;
         $data -> date_out = $request->date_out;
         $data -> quantity = $request->quantity;
         $data -> item_id = $request->item_id;

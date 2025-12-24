@@ -17,7 +17,6 @@ class GoodsIn extends Model
         'quantity',
         'date_received',
         'invoice_number',
-        'supplier_id',
     ];
 
     public function item(): BelongsTo
@@ -28,10 +27,5 @@ class GoodsIn extends Model
     public function user(): BelongsTo
     {
         return $this -> belongsTo(User::class);
-    }
-
-    public function supplier(): BelongsTo
-    {
-        return $this -> belongsTo(Supplier::class);
     }
 }

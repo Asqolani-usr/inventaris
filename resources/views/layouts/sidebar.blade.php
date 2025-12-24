@@ -61,22 +61,6 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a href="{{route('customer')}}" class="nav-link text-white">
-              <i class="nav-icon far fa-user"></i>
-              <p>
-              {{ __("customer") }}
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{route('supplier')}}" class="nav-link text-white">
-              <i class="nav-icon fas fa-shipping-fast"></i>
-              <p>
-                {{ __("supplier") }}
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
             <a href="javascript:void(0)" class="nav-link text-white">
               <i class="nav-icon fas fa-exchange-alt"></i>
               <p>

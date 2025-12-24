@@ -75,15 +75,6 @@
                                         <label for="tanggal_keluar" class="form-label">{{__("out date")}} <span class="text-danger">*</span></label>
                                         <input type="date" name="tanggal_keluar" class="form-control">
                                     </div>
-                                    <div class="form-group">
-                                        <label for="customer" class="form-label">{{__("choose customers")}}<span class="text-danger">*</span></label>
-                                        <select name="customer" class="form-control">
-                                            <option selected value="-- Pilih Customer --">-- {{__("choose customers")}} --</option>
-                                            @foreach( $customers as $customer)
-                                            <option value="{{$customer->id}}">{{$customer->name}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
                                 </div>
                                 <div class="col-md-5">
                                     <label for="kode_barang" class="form-label">{{__('item code')}} <span class="text-danger">*</span></label>
@@ -136,7 +127,6 @@
                                     <th class="border-bottom-0">{{__("date")}}</th>
                                     <th class="border-bottom-0">{{__("outgoing item code")}}</th>
                                     <th class="border-bottom-0">{{__("item code")}}</th>
-                                    <th class="border-bottom-0">{{__("customer")}}</th>
                                     <th class="border-bottom-0">{{__("item")}}</th>
                                     <th class="border-bottom-0">{{__("outgoing amount")}}</th>
                                     <th class="border-bottom-0" width="1%">{{__("action")}}</th>
@@ -269,7 +259,6 @@
         const item_id =  $("input[name='id_barang']").val();
         const user_id = `{{Auth::user()->id}}`;
         const date_out = $("input[name='tanggal_keluar']").val();
-        const customer_id = $("select[name='customer']").val();
         const invoice_number = $("input[name='kode'").val();
         const quantity = $("input[name='jumlah'").val();
 
@@ -278,7 +267,6 @@
         Form.append('item_id',item_id);
         Form.append('date_out', date_out );
         Form.append('quantity', quantity );
-        Form.append('customer_id', customer_id );
         Form.append('invoice_number', invoice_number );
         $.ajax({
             url:`{{route('transaksi.keluar.save')}}`,
@@ -298,7 +286,6 @@
                     $('#kembali').click();
                     $("input[name='id_barang']").val(null);
                     $("input[name='tanggal_keluar']").val(null);
-                    $("select[name='customer']").val('-- Pilih Customer --');
                     $("input[name='nama_barang']").val(null);
                     $("input[name='kode_barang']").val(null);
                     $("select[name='jenis_barang']").val(null);
@@ -329,13 +316,12 @@
         const item_id =  $("input[name='id_barang']").val();
         const user_id = `{{Auth::user()->id}}`;
         const date_out = $("input[name='tanggal_keluar']").val();
-        const customer_id = $("select[name='customer']").val();
         const invoice_number = $("input[name='kode']").val();
         const quantity = $("input[name='jumlah'").val();
         $.ajax({
             url:`{{route('transaksi.keluar.update')}}`,
             type:"put",
-            data:{id,item_id,user_id,date_out,customer_id,invoice_number,quantity},
+            data:{id,item_id,user_id,date_out,invoice_number,quantity},
             success:function(res){
                     Swal.fire({
                         position: "center",
@@ -347,7 +333,6 @@
                     $('#kembali').click();
                     $("input[name='id']").val(null);
                     $("input[name='id_barang']").val(null);
-                    $("select[name='customer']").val('-- Pilih Customer --');
                     $("input[name='nama_barang']").val(null);
                     $("input[name='tanggal_keluar']").val(null);
                     $("input[name='kode_barang']").val(null);
@@ -385,10 +370,6 @@
                },{
                 data:"kode_barang",
                 name:"kode_barang"
-               },
-               {
-                data:"customer_name",
-                name:"customer_name"
                },{
                 data:"item_name",
                 name:"item_name"
@@ -439,7 +420,6 @@
             $("input[name='kode']").val("BRGMSK-"+id);
             $("input[name='id']").val(null);
             $("input[name='id_barang']").val(null);
-            $("select[name='customer']").val('-- Pilih Customer --');
             $("input[name='nama_barang']").val(null);
             $("input[name='tanggal_keluar']").val(null);
             $("input[name='kode_barang']").val(null);
@@ -468,7 +448,6 @@
                 $("input[name='id']").val(data.id);
                 $("input[name='kode']").val(data.invoice_number);
                 $("input[name='id_barang']").val(data.id_barang);
-                $("select[name='customer']").val(data.customer_id);
                 $("input[name='nama_barang']").val(data.nama_barang);
                 $("input[name='tanggal_keluar']").val(data.date_out);
                 $("input[name='kode_barang']").val(data.kode_barang);

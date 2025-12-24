@@ -6,8 +6,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\BrandController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TransactionInController;
 use App\Http\Controllers\TransactionOutController;
@@ -84,30 +82,6 @@ Route::middleware(['auth', "localization"])-> group(function(){
     });
 
 
-    // customer (izin untuk staff hanya read)
-    Route::controller(CustomerController::class)->prefix('/customer')->group(function(){
-        Route::get('/','index')->name('customer');
-        Route::get('/daftar','list')->name('customer.list');
-        Route::middleware(['employee.middleware'])->group(function(){
-            Route::post('/simpan','save')->name('customer.save');
-            Route::post('/info','detail')->name('customer.detail');
-            Route::put('/ubah','update')->name('customer.update');
-            Route::delete('/hapus','delete')->name('customer.delete');
-        });
-    });
-
-
-    // supplier (izin untuk staff hanya read)
-    Route::controller(SupplierController::class)->prefix('/supplier')->group(function(){
-        Route::get('/','index')->name('supplier');
-        Route::get('/daftar','list')->name('supplier.list');
-        Route::middleware(['employee.middleware'])->group(function(){
-            Route::post('/simpan','save')->name('supplier.save');
-            Route::post('/info','detail')->name('supplier.detail');
-            Route::put('/ubah','update')->name('supplier.update');
-            Route::delete('/hapus','delete')->name('supplier.delete');
-        });
-    });
 
     // Transaksi  masuk
     Route::controller(TransactionInController::class)->prefix('/transaksi/masuk')->group(function(){

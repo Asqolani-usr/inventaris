@@ -49,17 +49,15 @@ class TransactionOutController extends Controller
 
     public function save(Request $request):JsonResponse
     {
+        // FIFO implementation: Check cumulative stock instead of monthly stock.
+        // This ensures that stock from previous months (First In) can be used (First Out).
+        $totalGoodsIn = GoodsIn::where('item_id', $request->item_id)->sum('quantity');
+        $totalGoodsOut = GoodsOut::where('item_id', $request->item_id)->sum('quantity');
+        $currentStock = $totalGoodsIn - $totalGoodsOut;
 
-        $currentMonth = date('m',strtotime($request->date_out));
-        $currentYear = date('Y',strtotime($request->date_out));
-        $goodsInThisMonth = GoodsIn::whereMonth('date_received', $currentMonth)
-        ->whereYear('date_received', $currentYear)->sum('quantity');
-        $goodsOutThisMonth = GoodsOut::whereMonth('date_out', $currentMonth)
-        ->whereYear('date_out', $currentYear)->sum('quantity');
-        $totalStockThisMonth = max(0,$goodsInThisMonth - $goodsOutThisMonth);
-        if($request->quantity > $totalStockThisMonth || $totalStockThisMonth == 0){
+        if($request->quantity > $currentStock || $currentStock <= 0){
             return  response()->json([
-                "message"=>__("insufficient stock this month")
+                "message"=>__("insufficient stock")
             ]) -> setStatusCode(400);
         }
         $data = [
